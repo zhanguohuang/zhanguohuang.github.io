@@ -77,6 +77,46 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-program/addr" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/11/program/addr/" class="article-date">
+  <time class="dt-published" datetime="2021-07-11T08:33:42.000Z" itemprop="datePublished">2021-07-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/11/program/addr/">段地址x16 + 偏移地址 = 物理地址</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这里讨论的是8086的CPU段地址和偏移地址的本质含义。<br>“段地址x16 + 偏移地址 = 物理地址”的本质含义是：<strong>CPU在访问内存时，用一个基础地址（段地址x16）和一个相对于基础地址的偏移地址相加，给出内存单元的物理地址。</strong><br>更一般的说，8086CPU的这种寻址功能是”<strong>基础地址+偏移地址=物理地址</strong>“寻址模式的一种具体解决方案。</p>
+<p>根本原因：8086CPU有20位的地址总线，可以传送20位的地址，达到1MB的寻址能力。8086CPU又是16位的结构，在内部一次性处理、传输、暂时存储的地址为16位。为了解决这个问题，8086CPU采用一种在内部用两个16位地址合成的方法来形成一个20位的物理地址。<br><img src="https://pic1.zhimg.com/80/v2-cfbb479390a1397b01b6abea31a27a34_1440w.jpg" alt="8086CPU相关部件的逻辑结构"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/11/program/addr/" data-id="ckqyyqsyr0000sufib2075ven" data-title="段地址x16 + 偏移地址 = 物理地址" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-work/method" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/03/work/method/" class="article-date">
@@ -227,6 +267,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/07/11/program/addr/">段地址x16 + 偏移地址 = 物理地址</a>
+          </li>
         
           <li>
             <a href="/2021/07/03/work/method/">提高效率和专注度工作方法</a>

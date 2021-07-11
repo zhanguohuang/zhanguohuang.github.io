@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>段地址x16 + 偏移地址 = 物理地址 | G&amp;M&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="这里讨论的是8086的CPU段地址和偏移地址的本质含义。“段地址x16 + 偏移地址 &#x3D; 物理地址”的本质含义是：CPU在访问内存时，用一个基础地址（段地址x16）和一个相对于基础地址的偏移地址相加，给出内存单元的物理地址。更一般的说，8086CPU的这种寻址功能是”基础地址+偏移地址&#x3D;物理地址“寻址模式的一种具体解决方案。 根本原因：8086CPU有20位的地址总线，可以传送20位的地址，达到1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="段地址x16 + 偏移地址 &#x3D; 物理地址">
+<meta property="og:url" content="http://example.com/2021/07/11/program/addr/index.html">
+<meta property="og:site_name" content="G&amp;M&#39;s Blog">
+<meta property="og:description" content="这里讨论的是8086的CPU段地址和偏移地址的本质含义。“段地址x16 + 偏移地址 &#x3D; 物理地址”的本质含义是：CPU在访问内存时，用一个基础地址（段地址x16）和一个相对于基础地址的偏移地址相加，给出内存单元的物理地址。更一般的说，8086CPU的这种寻址功能是”基础地址+偏移地址&#x3D;物理地址“寻址模式的一种具体解决方案。 根本原因：8086CPU有20位的地址总线，可以传送20位的地址，达到1">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-cfbb479390a1397b01b6abea31a27a34_1440w.jpg">
+<meta property="article:published_time" content="2021-07-11T08:33:42.000Z">
+<meta property="article:modified_time" content="2021-07-11T09:15:59.979Z">
+<meta property="article:author" content="zhanguohuang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-cfbb479390a1397b01b6abea31a27a34_1440w.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="G&M's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">G&amp;M&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Your know, for your tech career...</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-program/addr" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/11/program/addr/" class="article-date">
+  <time class="dt-published" datetime="2021-07-11T08:33:42.000Z" itemprop="datePublished">2021-07-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      段地址x16 + 偏移地址 = 物理地址
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>这里讨论的是8086的CPU段地址和偏移地址的本质含义。<br>“段地址x16 + 偏移地址 = 物理地址”的本质含义是：<strong>CPU在访问内存时，用一个基础地址（段地址x16）和一个相对于基础地址的偏移地址相加，给出内存单元的物理地址。</strong><br>更一般的说，8086CPU的这种寻址功能是”<strong>基础地址+偏移地址=物理地址</strong>“寻址模式的一种具体解决方案。</p>
+<p>根本原因：8086CPU有20位的地址总线，可以传送20位的地址，达到1MB的寻址能力。8086CPU又是16位的结构，在内部一次性处理、传输、暂时存储的地址为16位。为了解决这个问题，8086CPU采用一种在内部用两个16位地址合成的方法来形成一个20位的物理地址。<br><img src="https://pic1.zhimg.com/80/v2-cfbb479390a1397b01b6abea31a27a34_1440w.jpg" alt="8086CPU相关部件的逻辑结构"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/11/program/addr/" data-id="ckqyyqsyr0000sufib2075ven" data-title="段地址x16 + 偏移地址 = 物理地址" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/03/work/method/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">提高效率和专注度工作方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/11/program/addr/">段地址x16 + 偏移地址 = 物理地址</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/03/work/method/">提高效率和专注度工作方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/19/softdev/flow/">故障的原因是因为没有遵守流程吗</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 zhanguohuang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
